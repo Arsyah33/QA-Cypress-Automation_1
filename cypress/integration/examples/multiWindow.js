@@ -1,7 +1,32 @@
 /// <reference types="cypress" />
 
-describe('Test alert function', function (){
-     beforeEach(function (){
+describe('Test child tab', function () {
+
+  it('test child tab', function () {
+
+    cy.visit('https://codenboxautomationlab.com/practice/')
+
+    // ambil URL dari tombol open tab
+    cy.get('#opentab')
+      .should('have.attr', 'href')
+      .then((url) => {
+
+        // buka URL itu langsung (tanpa click)
+        cy.visit(url)
+
+        // sekarang kita sudah di domain YouTube
+        cy.url().should('include', 'youtube')
+
+        // pastikan channel name muncul
+        cy.get('ytd-channel-name', { timeout: 15000 })
+          .should('contain.text', 'Codenbox AutomationLab')
+
+      })
+
+  })
+
+
+     /*beforeEach(function (){
          cy.visit('https://codenboxautomationlab.com/practice/')
 
 })
@@ -17,6 +42,6 @@ describe('Test alert function', function (){
                //cy.get('h1[class="dynamic-text-view-model-wiz__h1"] span[role="text"]').should('contain','Codenbox AutomationLab')
    })
 
-})
+})*/
 
 })

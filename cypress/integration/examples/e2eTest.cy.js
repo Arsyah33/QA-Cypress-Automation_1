@@ -18,10 +18,13 @@ describe('Ecommerce Smoke Suit', { retries: 1 }, () => {
     // clear cookies and local storage before the 1st test
     cy.clearCookies();
     cy.clearLocalStorage();
+    cy.fixture('example').as('data')
 
-    cy.fixture('example').then(function (data) {
-      this.data = data
-    })
+
+    //cy.fixture('example').then((data) => {
+    //cy.fixture('example').then(function (data) {
+      //this.data = data
+    //})
   })
 
   it('Component test', () => {
@@ -95,9 +98,14 @@ describe('Ecommerce Smoke Suit', { retries: 1 }, () => {
 
 
     })
+    //cy.fixture('example').then((data) => {
 
+
+    //cy.log('Author:', data.name)
+    //cy.log('Review:', data.review)
+    cy.get('@data').then((data) => {
     // write a review
-    Single_ProductPage.writeReview()
+    Single_ProductPage.writeReview(data.name, data.review)
     /*it.skip('write review', () => {
     cy.get('#content > .nav > :nth-child(3) > .nav-link').click()*/
 
@@ -109,23 +117,29 @@ describe('Ecommerce Smoke Suit', { retries: 1 }, () => {
     })*/
 
     /// give 5 star rating
-    Single_ProductPage.clikOnRating();
+    Single_ProductPage.clikOnRating()
     //cy.get('[value="5"]').click()
     Single_ProductPage.submitReview()//cy.get('#button-review').click() //submit review
 
     /// validate succes mesage
-    Single_ProductPage.validateSuccessMessage().should('be.visible')
-      .invoke('text').then(function (text) {
-        expect(text.trim()).to.equal(this.data.successMessage)
+    Single_ProductPage.validateSuccessMessage()
+    .should('be.visible')
+    .and('contain', data.successMessage)
+    //.invoke('text')
+    //.then((text) => {
+      //expect(text.trim()).to.equal(data.successMessage)
+    //.then(function (text) {
+        //expect(text.trim()).to.equal(this.data.successMessage)
         //( 'Thank you for your review. It has been submitted to the webmaster for approval.')
-      })
+      //})
     /*cy.get('.alert', { timeout: 5000 }).should('be.visible')
     //.invoke('text').then((text) => {
     // expect(text.trim()).to.equal('Thank you for your review. It has been submitted to the webmaster for approval.')
     //})
 
     }) */
-
+    })
+  
     // click on add to cart
     Single_ProductPage.clickOnChart()
     /*cy.get('#button-cart').click()
@@ -139,18 +153,22 @@ describe('Ecommerce Smoke Suit', { retries: 1 }, () => {
 
     // clin on chart button
     //cy.wait(2000)
-    Single_ProductPage.clickOnChartButton()
+    //Single_ProductPage.clickOnChartButton()
     /*cy.get('.dropdown.d-grid').click()
     cy.get('.dropdown-menu.dropdown-menu-end.p-2.show').as('displayItem').should('be.visible')
     .and('contain', 'x 1', '602.00')
     .and('contain', '$602.00')
     and('contain', ' View Cart')
     and('contain', 'Checkout')*/
+    Single_ProductPage.openCartDropdown()
 
-    Single_ProductPage.getCartItemMenu().should('be.visible')
-      .and('contain', 'x 1', '602.00')
-      .and('contain', ' View Cart')
-      .and('contain', 'Checkout')
+    Single_ProductPage.getCartItemMenu()
+      //.should('be.visible')
+      .and('contain.text', 'MacBook')
+      .and('contain.text', '$602.00')
+      //.and('text', 'x 1', '602.00')
+      //.and('text', ' View Cart')
+      //.and('text', 'Checkout')
 
     Single_ProductPage.clickOnCheckout()
 

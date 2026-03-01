@@ -16,3 +16,19 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 import 'cypress-mochawesome-reporter/register';
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+
+  // ignore error dari YouTube / external scripts
+  if (err.message.includes('postMessage')) {
+    return false
+  }
+
+  if (err.message.includes('sw.js')) {
+    return false
+  }
+
+  if (err.message.includes('ServiceWorker')) {
+    return false
+  }
+})

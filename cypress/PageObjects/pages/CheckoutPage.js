@@ -2,7 +2,7 @@ import BasePage from "../BasePage";
 
 export default class CheckoutPage extends BasePage {
     static clickOnLoginLink() {
-        cy.get('form[id="form-register"] p a strong').click()
+        return cy.get('form[id="form-register"] p a strong').click()
     }
 
     static validateCheckoutAmount() {
