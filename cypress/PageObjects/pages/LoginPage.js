@@ -14,6 +14,7 @@ export default class LoginPage extends BasePage {
     }
 
     static successLogin(){
+        LoginPage.pause(2000)
         cy.login();
     }
 

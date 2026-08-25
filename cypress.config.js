@@ -1,6 +1,35 @@
 const { defineConfig } = require("cypress");
 const {downloadFile} = require('cypress-downloadfile/lib/addPlugin')
+const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
+const {
+  addCucumberPreprocessorPlugin,
+} = require("@badeball/cypress-cucumber-preprocessor");
+const {
+  createEsbuildPlugin,
+} = require("@badeball/cypress-cucumber-preprocessor/esbuild");
 
+async function setupNodeEvents(on, config) {
+  // This is required for the preprocessor to be able to generate JSON reports after each run, and more,
+  await addCucumberPreprocessorPlugin(on, config);
+
+   // Esbuild preprocessor
+  on(
+    "file:preprocessor",
+    createBundler({
+      sourcemap: "inline",
+      plugins: [createEsbuildPlugin(config)],
+    })
+  );
+
+  // Download plugin
+  on("task", { downloadFile });
+
+  // Mochawesome reporter
+  require("cypress-mochawesome-reporter/plugin")(on);
+
+  // Make sure to return the config object as it might have been modified by the plugin.
+  return config;
+}
 
 module.exports = defineConfig({
   projectId: "eozc7v",
@@ -20,14 +49,16 @@ module.exports = defineConfig({
 
   
   e2e: {
-    setupNodeEvents(on, config) {
+    setupNodeEvents,
+    experimentalStudio:true,
+    // setupNodeEvents(on, config) {
       // implement node event listeners here
 
-       on('task', {downloadFile})
-       require('cypress-mochawesome-reporter/plugin')(on); 
-    },
-    specPattern: 'cypress/integration/examples/*.js',
-    //specPattern: 'cypress/integration/examples/cucumber_bdd/*.feature',
+       //on('task', {downloadFile})
+      // require('cypress-mochawesome-reporter/plugin')(on); 
+    //},
+    specPattern: 'cypress/integration/examples/cucumber_bdd/*.feature',
+    //specPattern: 'cypress/integration/examples/*.js',
     supportFile: "cypress/support/e2e.js",
     chromeWebSecurity : false,
     //experimentalModifyObstructiveThirdPartyCode: true,
@@ -36,6 +67,8 @@ module.exports = defineConfig({
       env: {
         
         // environment specific variable
+        TAGS:"@smoke",
+
         QA: {
           baseUrl :'https://codenboxautomationlab.com',
           practiceUrl : 'https://demo.codenboxautomationlab.com/practice/',
